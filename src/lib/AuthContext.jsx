@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-const KEY = 'xsupport_access';
-const CODE = '1010';
+const KEY  = 'xsupport_access';
+const CODE = (import.meta.env.VITE_SUPPORT_ACCESS_CODE || '').trim();
 
 const AuthCtx = createContext(null);
 
@@ -16,7 +16,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signIn = (code) => {
-    if (code === CODE) {
+    if (!CODE) {
+      return { ok: false, error: 'Server misconfigured — access code missing' };
+    }
+    if (String(code).trim() === CODE) {
       localStorage.setItem(KEY, 'ok');
       setUser({ role: 'admin' });
       return { ok: true };
